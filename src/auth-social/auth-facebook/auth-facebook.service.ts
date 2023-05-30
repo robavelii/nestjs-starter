@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Facebook } from 'fb';
 import { ConfigService } from '@nestjs/config';
-import { SocialInterface } from '../social/interfaces/social.interface';
+import { SocialInterface } from '../../social/interfaces/social.interface';
 import { FacebookInterface } from './interfaces/facebook.interface';
 import { AuthFacebookLoginDto } from './dto/auth-facebook-login.dto';
 

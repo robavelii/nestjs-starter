@@ -1,5 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
+import * as path from 'path';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
+import { HeaderResolver } from 'nestjs-i18n';
+import { DataSource } from 'typeorm';
+import { UsersModule } from './modules/users/users.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
 import databaseConfig from './config/database.config';
@@ -11,22 +18,15 @@ import facebookConfig from './config/facebook.config';
 import googleConfig from './config/google.config';
 import twitterConfig from './config/twitter.config';
 import appleConfig from './config/apple.config';
-import * as path from 'path';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthAppleModule } from './auth-apple/auth-apple.module';
-import { AuthFacebookModule } from './auth-facebook/auth-facebook.module';
-import { AuthGoogleModule } from './auth-google/auth-google.module';
-import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
-import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
-import { HeaderResolver } from 'nestjs-i18n';
+import { AuthAppleModule } from './auth-social/auth-apple/auth-apple.module';
+import { AuthFacebookModule } from './auth-social/auth-facebook/auth-facebook.module';
+import { AuthGoogleModule } from './auth-social/auth-google/auth-google.module';
+import { AuthTwitterModule } from './auth-social/auth-twitter/auth-twitter.module';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { MailConfigService } from './mail/mail-config.service';
 import { ForgotModule } from './forgot/forgot.module';
 import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
-import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -63,9 +63,9 @@ import { DataSource } from 'typeorm';
       resolvers: [
         {
           use: HeaderResolver,
-          useFactory: (configService: ConfigService) => {
-            return [configService.get('app.headerLanguage')];
-          },
+          useFactory: (configService: ConfigService) => [
+            configService.get('app.headerLanguage'),
+          ],
           inject: [ConfigService],
         },
       ],

@@ -1,5 +1,5 @@
-import { APP_URL, ADMIN_EMAIL, ADMIN_PASSWORD } from '../utils/constants';
 import * as request from 'supertest';
+import { APP_URL, ADMIN_EMAIL, ADMIN_PASSWORD } from '../utils/constants';
 import { RoleEnum } from '../../src/roles/roles.enum';
 import { StatusEnum } from '../../src/statuses/statuses.enum';
 
@@ -38,38 +38,35 @@ describe('Users admin (e2e)', () => {
       });
   });
 
-  it('Change password for new user: /api/v1/users/:id (PATCH)', () => {
-    return request(app)
+  it('Change password for new user: /api/v1/users/:id (PATCH)', () =>
+    request(app)
       .patch(`/api/v1/users/${newUserFirst.id}`)
       .auth(apiToken, {
         type: 'bearer',
       })
       .send({ password: newUserChangedPasswordFirst })
-      .expect(200);
-  });
+      .expect(200));
 
-  it('Login via registered user: /api/v1/auth/email/login (GET)', () => {
-    return request(app)
+  it('Login via registered user: /api/v1/auth/email/login (GET)', () =>
+    request(app)
       .post('/api/v1/auth/email/login')
       .send({ email: newUserEmailFirst, password: newUserChangedPasswordFirst })
       .expect(200)
       .expect(({ body }) => {
         expect(body.token).toBeDefined();
-      });
-  });
+      }));
 
-  it('Fail create new user by admin: /api/v1/users (POST)', () => {
-    return request(app)
+  it('Fail create new user by admin: /api/v1/users (POST)', () =>
+    request(app)
       .post(`/api/v1/users`)
       .auth(apiToken, {
         type: 'bearer',
       })
       .send({ email: 'fail-data' })
-      .expect(422);
-  });
+      .expect(422));
 
-  it('Success create new user by admin: /api/v1/users (POST)', () => {
-    return request(app)
+  it('Success create new user by admin: /api/v1/users (POST)', () =>
+    request(app)
       .post(`/api/v1/users`)
       .auth(apiToken, {
         type: 'bearer',
@@ -86,11 +83,10 @@ describe('Users admin (e2e)', () => {
           id: StatusEnum.active,
         },
       })
-      .expect(201);
-  });
+      .expect(201));
 
-  it('Login via created by admin user: /api/v1/auth/email/login (GET)', () => {
-    return request(app)
+  it('Login via created by admin user: /api/v1/auth/email/login (GET)', () =>
+    request(app)
       .post('/api/v1/auth/email/login')
       .send({
         email: newUserByAdminEmailFirst,
@@ -99,11 +95,10 @@ describe('Users admin (e2e)', () => {
       .expect(200)
       .expect(({ body }) => {
         expect(body.token).toBeDefined();
-      });
-  });
+      }));
 
-  it('Get list of users by admin: /api/v1/users (GET)', () => {
-    return request(app)
+  it('Get list of users by admin: /api/v1/users (GET)', () =>
+    request(app)
       .get(`/api/v1/users`)
       .auth(apiToken, {
         type: 'bearer',
@@ -116,6 +111,5 @@ describe('Users admin (e2e)', () => {
         expect(body.data[0].hash).not.toBeDefined();
         expect(body.data[0].password).not.toBeDefined();
         expect(body.data[0].previousPassword).not.toBeDefined();
-      });
-  });
+      }));
 });

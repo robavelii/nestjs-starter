@@ -22,8 +22,9 @@ export class IsExist implements ValidatorConstraintInterface {
       .getRepository(repository)
       .findOne({
         where: {
-          [pathToProperty ? pathToProperty : validationArguments.property]:
-            pathToProperty ? value?.[pathToProperty] : value,
+          [pathToProperty || validationArguments.property]: pathToProperty
+            ? value?.[pathToProperty]
+            : value,
         },
       });
 

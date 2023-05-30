@@ -1,9 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { AuthUpdateDto } from './dto/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { StatusEnum } from 'src/statuses/statuses.enum';
@@ -11,12 +8,15 @@ import * as crypto from 'crypto';
 import { plainToClass } from 'class-transformer';
 import { Status } from 'src/statuses/entities/status.entity';
 import { Role } from 'src/roles/entities/role.entity';
-import { AuthProvidersEnum } from './auth-providers.enum';
 import { SocialInterface } from 'src/social/interfaces/social.interface';
-import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/modules/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
 import { MailService } from 'src/mail/mail.service';
+import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
+import { AuthProvidersEnum } from './auth-providers.enum';
+import { AuthUpdateDto } from './dto/auth-update.dto';
+import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
+import { User } from '../modules/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -76,18 +76,17 @@ export class AuthService {
         role: user.role,
       });
 
-      return { token, user: user };
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: 'incorrectPassword',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      return { token, user };
     }
+    throw new HttpException(
+      {
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          password: 'incorrectPassword',
+        },
+      },
+      HttpStatus.UNPROCESSABLE_ENTITY,
+    );
   }
 
   async validateSocialLogin(
@@ -248,7 +247,7 @@ export class AuthService {
       );
     }
 
-    const user = forgot.user;
+    const { user } = forgot;
     user.password = password;
     await user.save();
     await this.forgotService.softDelete(forgot.id);
